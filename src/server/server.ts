@@ -19,6 +19,28 @@ export function server() {
   return BunServer.instance;
 }
 
+const isBinaryContent = contentType =>
+  contentType.startsWith('application/octet-stream')
+  || contentType.startsWith('image/')
+  || contentType.startsWith('video/')
+  || contentType === 'application/pdf'
+
+const parseBody = request => {
+  const contentType = request.headers.get('content-type')
+  if(!contentType) return Promise.resolve({})
+  if (contentType.startsWith('text/')) {
+    return request.text()
+  } else if (contentType === 'application/json') {
+    return request.json()
+  } else if (contentType === 'multipart/form-data') {
+    return request.formData()
+  } else if (isBinaryContent(contentType)) {
+    return request.arrayBuffer().then(ab => new Unint8Array(ab))
+  } else {
+    return Promise.resolve({})
+  }
+}
+
 class BunServer implements RequestMethod {
   // singleton bun server
   private static server?: BunServer;
@@ -249,15 +271,7 @@ class BunServer implements RequestMethod {
       newReq.query[k] = v;
     });
 
-    // receive request body as string
-    const bodyStr = await req.text()
-    try {
-      newReq.body = JSON.parse(bodyStr)
-    } catch (err) {
-      newReq.body = bodyStr
-    }
-    req.arrayBuffer;
-    newReq.blob = req.blob();
+    newReq.body = await parseBody(req)
 
     // append headers
     req.headers.forEach((v, k) => {
