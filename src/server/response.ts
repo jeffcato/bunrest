@@ -1,7 +1,6 @@
 export class BunResponse {
     private response: Response;
     private options: ResponseInit = {};
-    private subs: Array<any> = [];
 
     status(code: number): BunResponse {
       this.options.status = code;
@@ -19,36 +18,26 @@ export class BunResponse {
     }
 
     json(body: any): void {
-      const that = this
-      that.response = Response.json(body, that.options);
-      that.subs.filter(({type}) => type === 'finished')
-        .forEach(({f}) => f(that.response))
+      this.response = Response.json(body, this.options);
+      if(typeof this.handleComplete === 'function') this.handleComplete(this.response)
     }
 
     send(body: any): void {
-      const that = this
-      that.response = new Response(body, that.options);
-      that.subs.filter(({type}) => type === 'finished')
-        .forEach(({f}) => f(that.response))
+      this.response = new Response(body, this.options);
+      if(typeof this.handleComplete === 'function') this.handleComplete(this.response)
     }
 
     redirect(url: string, status: number = 302): void {
-      const that = this
-      that.response = Response.redirect(url, status);
-      that.subs.filter(({type}) => type === 'finished')
-        .forEach(({f}) => f(that.response))
+      this.response = Response.redirect(url, status);
+      if(typeof this.handleComplete === 'function') this.handleComplete(this.response)
     }
 
     // nodejs way to set headers
     setHeader(key: string, value: any) {
-      if (!key || !value) {
-          throw new Error('Headers key or value should not be empty');
-      }
+      if (!key || !value) throw new Error('Headers key or value should not be empty');
 
       const headers = this.options.headers;
-      if (!headers) {
-          this.options.headers = { keys: value };
-      }
+      if (!headers) this.options.headers = { keys: value };
       this.options.headers[key] = value;
       return this;
     }
@@ -71,8 +60,8 @@ export class BunResponse {
       return !!this.response;
     }
 
-    on(type, f): Response {
-      this.subs.push({type, f})
+    onComplete(f) {
+      this.handleComplete = f
       return this
     }
 }
