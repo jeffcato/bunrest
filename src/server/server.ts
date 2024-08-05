@@ -35,7 +35,7 @@ const parseBody = request => {
   } else if (contentType === 'multipart/form-data') {
     return request.formData()
   } else if (isBinaryContent(contentType)) {
-    return request.arrayBuffer().then(ab => new Unint8Array(ab))
+    return request.arrayBuffer().then(ab => new Uint8Array(ab))
   } else {
     return Promise.resolve({})
   }
