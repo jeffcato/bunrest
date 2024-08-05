@@ -109,14 +109,14 @@ class BunServer implements RequestMethod {
    * Add middleware
    * @param middleware
    */
-  use(middleware: Handler): Router;
+  use(middleware: Handler): BunServer;
 
   /**
    * Attach router
    * @param path
    * @param router
    */
-  use(path: string, router: Router): Router;
+  use(path: string, router: Router): BunServer;
 
   /**
    * Attch middleware or router or global error handler
