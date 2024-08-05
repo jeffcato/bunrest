@@ -65,31 +65,31 @@ class BunServer implements RequestMethod {
   private webSocketData: <DataType>(req: BunRequest) => Promise<{ data: DataType}> | undefined
 
   get(path: string, ...handlers: Handler[]) {
-    this.delegate(path, "GET", handlers);
+    return this.delegate(path, "GET", handlers);
   }
 
   put(path: string, ...handlers: Handler[]) {
-    this.delegate(path, "PUT", handlers);
+    return this.delegate(path, "PUT", handlers);
   }
 
   post(path: string, ...handlers: Handler[]) {
-    this.delegate(path, "POST", handlers);
+    return this.delegate(path, "POST", handlers);
   }
 
   patch(path: string, ...handlers: Handler[]) {
-    this.delegate(path, "PATCH", handlers);
+    return this.delegate(path, "PATCH", handlers);
   }
 
   delete(path: string, ...handlers: Handler[]) {
-    this.delegate(path, "DELETE", handlers);
+    return this.delegate(path, "DELETE", handlers);
   }
 
   options(path: string, ...handlers: Handler[]) {
-    this.delegate(path, "OPTIONS", handlers);
+    return this.delegate(path, "OPTIONS", handlers);
   }
 
   head(path: string, ...handlers: Handler[]) {
-    this.delegate(path, "HEAD", handlers);
+    return this.delegate(path, "HEAD", handlers);
   }
 
   /**
@@ -136,6 +136,7 @@ class BunServer implements RequestMethod {
         this.errorHandlers.push(arg1 as Handler);
       }
     }
+    return this
   }
 
   router() {
@@ -311,6 +312,7 @@ class BunServer implements RequestMethod {
     const handler = handlers[handlers.length - 1];
 
     this.submitToMap(method.toLowerCase(), path, handler, middlewares);
+    return this
   }
 
   private submitToMap(method: string, path: string, handler: Handler, middlewares: Middleware) {

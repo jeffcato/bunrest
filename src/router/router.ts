@@ -31,34 +31,42 @@ export class Router implements RequestMethod {
 
   get(path: string, ...handlers: Handler[]) {
     this.delegate(path, "GET", handlers);
+    return this
   }
 
   post(path: string, ...handlers: Handler[]) {
     this.delegate(path, "POST", handlers);
+    return this
   }
 
   patch(path: string, ...handlers: Handler[]) {
     this.delegate(path, "PATCH", handlers);
+    return this
   }
 
   options(path: string, ...handlers: Handler[]) {
     this.delegate(path, "OPTIONS", handlers);
+    return this
   }
 
   put(path: string, ...handlers: Handler[]) {
     this.delegate(path, "PUT", handlers);
+    return this
   }
 
   delete(path: string, ...handlers: Handler[]) {
     this.delegate(path, "DELETE", handlers);
+    return this
   }
 
   head(path: string, ...handlers: Handler[]) {
     this.delegate(path, "HEAD", handlers);
+    return this
   }
 
   use(middleware: Handler) {
     this.localMiddlewares.push(middleware);
+    return this
   }
 
   attach(globalPath: string) {
