@@ -31,6 +31,7 @@ const parseBody = request => {
   if (contentType.startsWith('text/')) {
     return request.text()
   } else if (contentType === 'application/json') {
+    console.log('inbound json')
     return request.json()
   } else if (contentType === 'multipart/form-data') {
     return request.formData()
