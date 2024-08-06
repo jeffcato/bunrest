@@ -31,14 +31,21 @@ const parseBody = request => {
   if (contentType.startsWith('text/')) {
     return request.text()
   } else if (contentType === 'application/json') {
-    console.log('inbound json')
     return request.json()
   } else if (contentType === 'multipart/form-data') {
     return request.formData()
   } else if (isBinaryContent(contentType)) {
     return request.arrayBuffer().then(ab => new Uint8Array(ab))
   } else {
-    return Promise.resolve({})
+    // receive unknown request as string and attempt to parse as JSON
+    return request.text()
+      .then(txt => {
+        try {
+          return JSON.parse(txt)
+        } catch(e) {
+          return txt
+        }
+      })
   }
 }
 
